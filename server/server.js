@@ -16,6 +16,8 @@ app.use(bodyParser.json());
 app.use(cors())
 app.use(morgan("tiny"));
 
+app.use(express.static('client/build'))
+
 /******* MODEL *********/
 const { Post } = require("./models/post");
 
@@ -60,6 +62,13 @@ app.post("/api/contact-me", (req, res) => {
       });
     });
 });
+
+if( process.env.NODE_ENV === 'production'){
+  const path = require('path')
+  app.get('/*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, '../client', 'build', 'index.html'))
+  })
+}
 
 mongooseConnect(() =>
   app.listen(port, () => {
